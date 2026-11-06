@@ -1,0 +1,54 @@
+name: Package Firefox extension
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "manifest.json"
+      - "popup.html"
+      - "popup.css"
+      - "popup.js"
+      - "content.js"
+      - ".github/workflows/package.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Validate extension manifest
+        run: |
+          python -m json.tool manifest.json > /dev/null
+          test -f popup.html
+          test -f popup.css
+          test -f popup.js
+          test -f content.js
+
+      - name: Build unsigned XPI
+        run: |
+          mkdir -p dist
+          zip -j dist/Font-Override.xpi \
+            manifest.json popup.html popup.css popup.js content.js
+          cp dist/Font-Override.xpi dist/Font-Override.zip
+
+      - name: Upload install package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Font-Override-unsigned-XPI
+          path: dist/Font-Override.xpi
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload ZIP copy
+        uses: actions/upload-artifact@v4
+        with:
+          name: Font-Override-ZIP
+          path: dist/Font-Override.zip
+          if-no-files-found: error
+          retention-days: 30
