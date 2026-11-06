@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Font Override</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<main class="panel">
+  <header><div class="mark">Aa</div><div class="heading"><h1>Font Override</h1><p id="siteLabel">Current website</p></div><button id="reset" class="icon-button" title="Reset settings" aria-label="Reset settings">↺</button></header>
+  <section class="toggle-row"><div><b>Enabled</b><small>Override website fonts</small></div><label class="switch"><input id="enabled" type="checkbox"><span></span></label></section>
+  <hr>
+  <section><label class="label">Apply to</label><div class="segmented"><button id="scopeAll" class="selected">All websites</button><button id="scopeSite">This website</button></div></section>
+  <section><label class="label" for="fontFamily">Font family</label>
+    <select id="fontFamily">
+      <option value="Arial, Helvetica, sans-serif">Arial</option>
+      <option value="Roboto, Arial, sans-serif">Roboto</option>
+      <option value="Inter, Arial, sans-serif">Inter</option>
+      <option value="Manrope, Arial, sans-serif">Manrope</option>
+      <option value="system-ui, sans-serif">System default</option>
+      <option value="'Playfair Display', serif">Playfair Display · Google Fonts</option>
+      <option value="Georgia, serif">Georgia</option>
+      <option value="'Times New Roman', serif">Times New Roman</option>
+      <option value="Verdana, sans-serif">Verdana</option>
+      <option value="monospace">Monospace</option>
+      <option value="custom">Custom…</option>
+    </select>
+    <input id="customFont" class="hidden" type="text" maxlength="100" placeholder="Enter a font family name">
+    <small class="hint">Most fonts must already be installed on your device. Playfair Display loads from Google Fonts and needs an internet connection.</small>
+  </section>
+  <section><div class="range-heading"><label class="label" for="fontSize">Text size</label><output id="sizeValue">100%</output></div>
+    <input id="fontSize" type="range" min="80" max="140" step="5" value="100">
+    <div class="range-labels"><small>Smaller</small><small>Larger</small></div>
+  </section>
+  <footer><i></i><span id="status">Settings saved automatically</span></footer>
+</main>
+<script src="popup.js"></script>
+</body></html>
