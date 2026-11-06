@@ -1,0 +1,15 @@
+const $=id=>document.getElementById(id);
+const defaults={enabled:true,fontFamily:"Arial, Helvetica, sans-serif",fontSize:100};
+let scope="all",host=null,globalSettings={...defaults},siteSettings={};
+function getHost(url){try{const u=new URL(url);return ["http:","https:"].includes(u.protocol)?u.hostname:null}catch{return null}}
+function current(){return scope==="site"?{...globalSettings,...(siteSettings[host]||{})}:{...globalSettings}}
+function fontValue(){return $("fontFamily").value==="custom"?$("customFont").value.trim()||defaults.fontFamily:$("fontFamily").value}
+function setFont(value){const select=$("fontFamily");const known=[...select.options].some(o=>o.value===value&&o.value!=="custom");if(known){select.value=value;$("customFont").classList.add("hidden")}else{select.value="custom";$("customFont").value=value;$("customFont").classList.remove("hidden")}}
+function render(){const s=current();$("enabled").checked=!!s.enabled;setFont(s.fontFamily);$("fontSize").value=s.fontSize;$("sizeValue").textContent=s.fontSize+"%";$("scopeAll").classList.toggle("selected",scope==="all");$("scopeSite").classList.toggle("selected",scope==="site");$("scopeSite").disabled=!host;$("siteLabel").textContent=host||"Open a regular website"}
+async function save(){const s={enabled:$("enabled").checked,fontFamily:fontValue(),fontSize:Number($("fontSize").value)};if(scope==="site"&&host){siteSettings[host]=s;await browser.storage.local.set({siteSettings})}else{globalSettings=s;await browser.storage.local.set({globalSettings})}$("sizeValue").textContent=s.fontSize+"%";$("status").textContent="Settings saved"}
+async function init(){const [data,tabs]=await Promise.all([browser.storage.local.get(["globalSettings","siteSettings"]),browser.tabs.query({active:true,currentWindow:true})]);globalSettings={...defaults,...(data.globalSettings||{})};siteSettings=data.siteSettings||{};host=getHost(tabs[0]?.url||"");render();if(!host){$("enabled").disabled=true;$("scopeSite").disabled=true;$("status").textContent="This browser page cannot be modified"}}
+$("scopeAll").addEventListener("click",()=>{scope="all";render()});$("scopeSite").addEventListener("click",()=>{if(host){scope="site";render()}});
+$("fontFamily").addEventListener("change",async()=>{$("customFont").classList.toggle("hidden",$("fontFamily").value!=="custom");await save()});
+$("customFont").addEventListener("change",save);$("enabled").addEventListener("change",save);$("fontSize").addEventListener("input",()=>$("sizeValue").textContent=$("fontSize").value+"%");$("fontSize").addEventListener("change",save);
+$("reset").addEventListener("click",async()=>{if(scope==="site"&&host){delete siteSettings[host];await browser.storage.local.set({siteSettings})}else{globalSettings={...defaults};await browser.storage.local.set({globalSettings})}render();$("status").textContent="Settings reset"});
+init().catch(()=>$("status").textContent="Could not load settings");
