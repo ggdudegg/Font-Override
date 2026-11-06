@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "Font Override",
+  "version": "1.1.0",
+  "description": "Choose the font family and text size used by websites.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "font-override@ggdudegg.github.io",
+      "strict_min_version": "109.0"
+    }
+  },
+  "permissions": ["storage", "tabs", "<all_urls>"],
+  "browser_action": {
+    "default_title": "Font Override",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [{
+    "matches": ["http://*/*", "https://*/*"],
+    "js": ["content.js"],
+    "run_at": "document_start",
+    "all_frames": true
+  }]
+}
